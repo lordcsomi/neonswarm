@@ -1,0 +1,39 @@
+name: "game"
+scale_along_z: 0
+embedded_instances {
+  id: "container"
+  children: "score"
+  children: "squares"
+  children: "tower"
+  data: "components {\n"
+  "  id: \"container\"\n"
+  "  component: \"/game/container.script\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "tower"
+  data: ""
+}
+embedded_instances {
+  id: "score"
+  data: "components {\n"
+  "  id: \"score\"\n"
+  "  component: \"/game/score.script\"\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "squares"
+  data: "components {\n"
+  "  id: \"square_spawner\"\n"
+  "  component: \"/game/square_spawner.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"factory\"\n"
+  "  type: \"factory\"\n"
+  "  data: \"prototype: \\\"/game/square.go\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}

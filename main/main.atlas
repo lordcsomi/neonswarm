@@ -1,7 +1,4 @@
 images {
-  image: "/assets/images/background.png"
-}
-images {
   image: "/assets/images/circle.png"
 }
 images {
@@ -18,5 +15,8 @@ images {
 }
 images {
   image: "/assets/images/square.png"
+}
+images {
+  image: "/assets/images/background.png"
 }
 extrude_borders: 2

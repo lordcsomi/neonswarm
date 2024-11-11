@@ -1,50 +1,28 @@
+local bullet_speed = 500
+local fire_rate = 0.2
+
+-- Function to fire a bullet
+local function fire_bullet(self)
+	local barrel_pos = vmath.vector3(320, 568, 0)
+	local barrel_id = "/barrel"
+	local barrel_rotation = go.get(barrel_id, "euler.z")
+
+	-- Calculate the direction vector
+	local angle_rad = math.rad(barrel_rotation + 180)
+	local direction = vmath.vector3(math.cos(angle_rad), math.sin(angle_rad), 0)
+	local rotation_quat = vmath.quat_rotation_z(angle_rad)
+
+	-- Create the bullet from the factory
+	local bullet = factory.create("#bullet_factory", barrel_pos, rotation_quat, {}, 1)
+
+end
+
 function init(self)
-	-- Add initialization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function final(self)
-	-- Add finalization code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function update(self, dt)
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function fixed_update(self, dt)
-	-- This function is called if 'Fixed Update Frequency' is enabled in the Engine section of game.project
-	-- Can be coupled with fixed updates of the physics simulation if 'Use Fixed Timestep' is enabled in
-	-- Physics section of game.project
-	-- Add update code here
-	-- Learn more: https://defold.com/manuals/script/
-	-- Remove this function if not needed
-end
-
-function on_message(self, message_id, message, sender)
-	-- Add message-handling code here
-	-- Learn more: https://defold.com/manuals/message-passing/
-	-- Remove this function if not needed
-end
-
-function on_input(self, action_id, action)
-	-- Add input-handling code here. The game object this script is attached to
-	-- must have acquired input focus:
-	--
-	--    msg.post(".", "acquire_input_focus")
-	--
-	-- All mapped input bindings will be received. Mouse and touch input will
-	-- be received regardless of where on the screen it happened.
-	-- Learn more: https://defold.com/manuals/input/
-	-- Remove this function if not needed
-end
-
-function on_reload(self)
-	-- Add reload-handling code here
-	-- Learn more: https://defold.com/manuals/hot-reload/
-	-- Remove this function if not needed
+	msg.post(".", "acquire_input_focus")
+	self.rotation_speed = 50
+	local barrel_id = "/barrel"
+	local barrel_rotation = go.get(barrel_id, "euler.z")
+	timer.delay(fire_rate, true, function()
+		fire_bullet(self)
+	end)
 end

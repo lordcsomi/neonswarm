@@ -19,4 +19,7 @@ images {
 images {
   image: "/assets/images/background.png"
 }
+images {
+  image: "/assets/images/pipe.png"
+}
 extrude_borders: 2

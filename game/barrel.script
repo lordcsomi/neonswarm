@@ -1,0 +1,47 @@
+function init(self)
+	msg.post(".", "acquire_input_focus") -- Acquire input focus
+	self.target_angle = 0  -- The target angle to rotate towards
+	self.is_rotating = false -- Flag to check if it's already animating
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.pressed then
+		local pos = go.get_position() 
+		local dx = action.x - pos.x
+		local dy = action.y - pos.y
+
+		-- Calculate target angle (in degrees) and adjust by 180 degrees to face the touch
+		local target_angle = math.atan2(dy, dx) * 180 / math.pi + 180
+
+		-- Normalize target angle to the range [0, 360)
+		if target_angle < 0 then
+			target_angle = target_angle + 360
+		elseif target_angle >= 360 then
+			target_angle = target_angle - 360
+		end
+
+		-- Get the current angle of the cannon barrel
+		local current_angle = go.get(".", "euler.z")
+
+
+		-- Calculate the shortest rotation direction
+		local angle_diff = (target_angle - current_angle + 540) % 360 - 180
+		local shortest_angle = current_angle + angle_diff
+
+		-- Start rotating the barrel to the calculated shortest angle
+		rotate_barrel(self, shortest_angle)
+	end
+end
+
+-- Function to rotate the barrel smoothly
+function rotate_barrel(self, target_angle)
+	if self.is_rotating then
+		return
+	end
+	self.is_rotating = true
+
+	-- Animate the rotation using go.animate
+	go.animate(".", "euler.z", go.PLAYBACK_ONCE_FORWARD, target_angle, go.EASING_INOUTSINE, 0.5, 0, function()
+		self.is_rotating = false -- Reset the flag when the animation is done
+	end)
+end

@@ -1,0 +1,17 @@
+-- bullet.script
+local bullet_speed = 700
+
+function init(self)
+	-- Get the direction of the bullet from its rotation
+	local rotation = go.get_rotation()
+	local direction = vmath.rotate(rotation, vmath.vector3(1, 0, 0))  -- Moving in the x-direction based on rotation
+
+	-- Calculate a far-away target position in the given direction
+	local target_position = go.get_position() + direction * 2000  -- Adjust the distance if needed
+
+	-- Animate the bullet towards the target position
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, target_position, go.EASING_LINEAR, 2000 / bullet_speed, 0, function()
+		-- Delete the bullet once it reaches the target
+		go.delete()
+	end)
+end

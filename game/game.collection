@@ -2,7 +2,7 @@ name: "game"
 scale_along_z: 0
 embedded_instances {
   id: "container"
-  children: "score"
+  children: "gui"
   children: "squares"
   children: "tower"
   data: "components {\n"
@@ -74,33 +74,6 @@ embedded_instances {
   ""
 }
 embedded_instances {
-  id: "score"
-  data: "components {\n"
-  "  id: \"score\"\n"
-  "  component: \"/game/score.script\"\n"
-  "}\n"
-  "embedded_components {\n"
-  "  id: \"label\"\n"
-  "  type: \"label\"\n"
-  "  data: \"size {\\n"
-  "  x: 128.0\\n"
-  "  y: 32.0\\n"
-  "}\\n"
-  "text: \\\"0\\\"\\n"
-  "font: \\\"/assets/fonts/schluber.font\\\"\\n"
-  "material: \\\"/builtins/fonts/font-df.material\\\"\\n"
-  "\"\n"
-  "  position {\n"
-  "    z: 1.0\n"
-  "  }\n"
-  "}\n"
-  ""
-  position {
-    x: 320.0
-    y: 300.0
-  }
-}
-embedded_instances {
   id: "squares"
   data: "components {\n"
   "  id: \"square_spawner\"\n"
@@ -108,8 +81,8 @@ embedded_instances {
   "}\n"
   "embedded_components {\n"
   "  id: \"square_factory\"\n"
-  "  type: \"factory\"\n"
-  "  data: \"prototype: \\\"/game/square.go\\\"\\n"
+  "  type: \"collectionfactory\"\n"
+  "  data: \"prototype: \\\"/game/square_with_infill.collection\\\"\\n"
   "\"\n"
   "}\n"
   ""
@@ -134,8 +107,8 @@ embedded_instances {
   "    z: 1.0\n"
   "  }\n"
   "  scale {\n"
-  "    x: 0.35\n"
-  "    y: 0.25\n"
+  "    x: 0.3\n"
+  "    y: 0.1\n"
   "  }\n"
   "}\n"
   ""
@@ -143,4 +116,12 @@ embedded_instances {
     x: 320.0
     y: 568.0
   }
+}
+embedded_instances {
+  id: "gui"
+  data: "components {\n"
+  "  id: \"game\"\n"
+  "  component: \"/game/game.gui\"\n"
+  "}\n"
+  ""
 }

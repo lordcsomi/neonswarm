@@ -3,6 +3,7 @@ title = NeonSwarm
 
 [bootstrap]
 main_collection = /main/main.collectionc
+render = /main/rendering/custom.renderc
 
 [input]
 game_binding = /input/game.input_bindingc

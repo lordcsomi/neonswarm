@@ -1,14 +1,38 @@
 function init(self)
+	self.health = 100  -- Set the enemy's initial health to 100
 	local tower_pos = go.get_position("/barrel")  -- Get the tower's position
-	local current_pos = go.get_position()        -- Get the enemy's current position
+	local current_pos = go.get_position()         -- Get the enemy's current position
 
 	-- Calculate the duration based on the distance to the target (for smoother movement)
 	local distance = vmath.length(tower_pos - current_pos)
 	local move_duration = distance / 100  -- Adjust speed factor as needed (100 is speed factor)
+
+	-- Animate the enemy to continuously rotate
+	go.animate(".", "euler.z", go.PLAYBACK_LOOP_FORWARD, 360, go.EASING_LINEAR, 10)
 
 	-- Animate the enemy to move towards the tower smoothly
 	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, tower_pos, go.EASING_LINEAR, move_duration, 0, function()
 		-- Optional: Add behavior when reaching the tower (e.g., delete the enemy)
 		go.delete()
 	end)
+
+	-- Set the initial scale of the health indicator
+	go.set_scale(vmath.vector3(1, 1, 1), "infill")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("deal_damage") then
+		self.health = self.health - message.damage  -- Reduce health
+		local health_percentage = math.max(self.health / 100, 0)  -- Ensure it doesn't go below 0
+
+		if self.health <= 0 then
+			-- Play explosion effect and delete the enemy
+			msg.post("/gui", "increment_score", { value = 1 })
+			particlefx.play("#explosion")
+			go.delete()
+		end
+
+		-- Update the visual representation of health
+		go.set_scale(vmath.vector3(health_percentage, health_percentage, 1), "infill")
+	end
 end

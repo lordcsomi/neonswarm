@@ -1,0 +1,22 @@
+script: "/loading/loading.gui_script"
+fonts {
+  name: "score_font"
+  font: "/assets/fonts/score_font.font"
+}
+nodes {
+  position {
+    x: 320.0
+    y: 568.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Neon Tower"
+  font: "score_font"
+  id: "root"
+  inherit_alpha: true
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

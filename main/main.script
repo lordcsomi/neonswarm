@@ -1,15 +1,45 @@
 function init(self)
+	-- Acquire input focus and set up projection
 	msg.post(".", "acquire_input_focus")
 	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 
-	-- load the game collection for now
-	msg.post("#game_proxy", "load")
-	msg.post("#game_proxy", "enable")
-	print("loading game collection")
+	-- Load and enable the loading collection
+	msg.post("#loading_proxy", "load")
+	msg.post("#loading_proxy", "enable")
+
+	-- Track loading state
+	self.loading_game = false
+	self.starting_time = socket.gettime()
+	print("Game started at", self.starting_time)
 end
 
-function on_input(self, action_id, action)
-	if action_id == hash("touch") and action.pressed then
-		print("Touch!")
+function on_message(self, message_id, message, sender)
+	if message_id == hash("proxy_loaded") then
+		if sender == msg.url("main:/main#loading_proxy") then
+			msg.post("#game_proxy", "async_load")
+			self.loading_game = true
+		elseif sender == msg.url("main:/main#game_proxy") then
+			local current_time = socket.gettime()
+			local elapsed_time = current_time - self.starting_time
+			if elapsed_time >= 3 then
+				msg.post("loading:/gui", "animate_out")
+				timer.delay(0.5, false, function()
+					msg.post("#game_proxy", "enable")
+				end)
+			else
+				local remaining_time = 3 - elapsed_time
+				-- Set a timer to delay actions
+				timer.delay(remaining_time, false, function()
+					-- Trigger the loading screen animation out
+					msg.post("loading:/gui", "animate_out")
+
+					timer.delay(0.5, false, function()
+						msg.post("#game_proxy", "enable")
+					end)
+				end)
+			end
+
+			self.loading_game = false
+		end
 	end
 end

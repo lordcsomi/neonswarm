@@ -1,0 +1,26 @@
+function init(self)
+	self.score = 0
+	-- Reference the score GUI node
+	self.score_label = gui.get_node("score_label")
+	-- Keep track of whether the GUI is active or disabled
+	self.is_enabled = true
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("increment_score") and self.is_enabled then
+		self.score = self.score + message.value
+		-- Update the score text on the GUI
+		gui.set_text(self.score_label, tostring(self.score))
+
+		-- Animate the score label size to 0.9 for 0.5 seconds and then back to 1.0
+		gui.animate(self.score_label, "scale", vmath.vector3(0.9, 0.9, 1), gui.EASING_OUTQUAD, 0.25, 0, function()
+			-- Reset back to normal size
+			gui.animate(self.score_label, "scale", vmath.vector3(1.0, 1.0, 1), gui.EASING_OUTQUAD, 0.25)
+		end)
+
+	elseif message_id == hash("end") then
+		-- Disable the GUI by hiding the nodes and preventing updates
+		gui.set_enabled(false)  -- Disable all GUI interactions
+		self.is_enabled = false -- Prevent further updates to the GUI
+	end
+end

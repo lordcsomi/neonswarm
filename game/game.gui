@@ -1,0 +1,29 @@
+script: "/game/game.gui_script"
+fonts {
+  name: "schluber"
+  font: "/assets/fonts/score_font.font"
+}
+nodes {
+  position {
+    x: 320.0
+    y: 300.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "schluber"
+  id: "score_label"
+  layer: "score"
+  inherit_alpha: true
+}
+layers {
+  name: "background"
+}
+layers {
+  name: "score"
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

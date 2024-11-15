@@ -1,0 +1,14 @@
+name: "game_over"
+scale_along_z: 0
+embedded_instances {
+  id: "container"
+  data: "components {\n"
+  "  id: \"container\"\n"
+  "  component: \"/game_over/container.script\"\n"
+  "}\n"
+  "components {\n"
+  "  id: \"game_over\"\n"
+  "  component: \"/game_over/game_over.gui\"\n"
+  "}\n"
+  ""
+}

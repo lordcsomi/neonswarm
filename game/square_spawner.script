@@ -1,22 +1,36 @@
 -- Function to spawn an enemy outside the screen
 local function spawn_enemy(self)
 	local spawn_positions = {
-		vmath.vector3(-50, math.random(0, 720), 0),  -- Left side
-		vmath.vector3(690, math.random(0, 720), 0),  -- Right side
-		vmath.vector3(math.random(0, 640), 770, 0),  -- Top side
-		vmath.vector3(math.random(0, 640), -50, 0)   -- Bottom side
+		vmath.vector3(-50, math.random(0, 720), 0),   -- Left side
+		vmath.vector3(690, math.random(0, 720), 0),   -- Right side
+		vmath.vector3(math.random(0, 640), 1136, 0),  -- Top side
+		vmath.vector3(math.random(0, 640), -50, 0)    -- Bottom side
 	}
 
 	-- Choose a random spawn position outside the screen
-	local position = spawn_positions[math.random(1, #spawn_positions)]
+	local position = spawn_positions[math.random(math.random(), #spawn_positions)]
 
 	-- Create the enemy from the factory
-	factory.create("#square_factory", position, nil, {}, 1)
+	collectionfactory.create("#square_factory", position, nil, {}, 1)
 end
 
 function init(self)
-	self.spawn_rate = 2  -- Spawn every 2 seconds
-	timer.delay(self.spawn_rate, true, function()
-		spawn_enemy(self)
-	end)
+	self.spawn_rate = 2           -- Initial spawn rate in seconds
+	self.min_spawn_rate = 0.2     -- Minimum cap for spawn rate
+	self.spawn_rate_decrease = 0.99  -- Factor to decrease spawn rate (0.95 means decrease by 5% each cycle)
+
+	-- Function to control the spawning rate
+	local function increase_spawn_rate(self)
+		-- Decrease the spawn rate by 1% until it hits the minimum limit
+		self.spawn_rate = math.max(self.spawn_rate * self.spawn_rate_decrease, self.min_spawn_rate)
+
+		-- Set up the next spawn with the updated rate
+		timer.delay(self.spawn_rate, false, function()
+			spawn_enemy(self)
+			increase_spawn_rate(self)  -- Call recursively to continue spawning with the new rate
+		end)
+	end
+
+	-- Start the first spawn
+	increase_spawn_rate(self)
 end

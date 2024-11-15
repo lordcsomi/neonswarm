@@ -1,0 +1,41 @@
+script: "/game_over/game_over.gui_script"
+fonts {
+  name: "schluber"
+  font: "/assets/fonts/score_font.font"
+}
+textures {
+  name: "main"
+  texture: "/main/main.atlas"
+}
+nodes {
+  position {
+    x: 260.0
+    y: 568.0
+  }
+  scale {
+    x: 0.1
+    y: 0.1
+  }
+  type: TYPE_BOX
+  texture: "main/reload"
+  id: "reload"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 400.0
+    y: 568.0
+  }
+  scale {
+    x: 0.1
+    y: 0.1
+  }
+  type: TYPE_BOX
+  texture: "main/home"
+  id: "home"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

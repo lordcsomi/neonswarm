@@ -14,12 +14,18 @@ images {
   image: "/assets/images/replay_button.png"
 }
 images {
+  image: "/assets/images/pipe.png"
+}
+images {
+  image: "/assets/images/home.png"
+}
+images {
+  image: "/assets/images/reload.png"
+}
+images {
   image: "/assets/images/square.png"
 }
 images {
-  image: "/assets/images/background.png"
-}
-images {
-  image: "/assets/images/pipe.png"
+  image: "/assets/images/square_infill.png"
 }
 extrude_borders: 2

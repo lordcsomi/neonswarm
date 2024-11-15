@@ -1,0 +1,10 @@
+name: "loading"
+scale_along_z: 0
+embedded_instances {
+  id: "gui"
+  data: "components {\n"
+  "  id: \"loading\"\n"
+  "  component: \"/loading/loading.gui\"\n"
+  "}\n"
+  ""
+}

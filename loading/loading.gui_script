@@ -1,0 +1,15 @@
+function init(self)
+	-- Acquire the root node of the loading screen
+	self.root_node = gui.get_node("root")  -- Make sure to set the node name to "root" or any desired node to animate
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("animate_out") then
+		-- Animate the root node upwards, out of the screen
+		local screen_height = gui.get_height()  -- Get the height of the screen
+		gui.animate(self.root_node, "position.y", screen_height + 100, gui.EASING_OUTQUAD, 1.0, 0, function()
+			-- After the animation, disable the loading screen
+			msg.post("#", "disable")
+		end)
+	end
+end

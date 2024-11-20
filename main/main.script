@@ -6,40 +6,90 @@ function init(self)
 	-- Load and enable the loading collection
 	msg.post("#loading_proxy", "load")
 	msg.post("#loading_proxy", "enable")
+	msg.post("#game_proxy", "load")
 
-	-- Track loading state
+	-- Track loading state and starting time
 	self.loading_game = false
 	self.starting_time = socket.gettime()
 	print("Game started at", self.starting_time)
 end
 
+local function animate_out_and_transition(self, delay, callback)
+	-- Animate everything out
+	timer.delay(delay, false, callback)
+end
+
+local function handle_proxy_loaded(self, sender)
+	if sender == msg.url("main:/main#loading_proxy") then
+		-- Begin loading menu
+		msg.post("#menu_proxy", "load")
+		self.loading_game = true
+	elseif sender == msg.url("main:/main#menu_proxy") then
+		-- Calculate elapsed time since start
+		local current_time = socket.gettime()
+		local elapsed_time = current_time - self.starting_time
+		local remaining_time = math.max(0, 3 - elapsed_time)
+
+		-- Delay transition if necessary
+		animate_out_and_transition(self, remaining_time + 1, function()
+			msg.post("loading:/gui", "animate_out")
+			timer.delay(0.5, false, function()
+				msg.post("#menu_proxy", "enable")
+				msg.post("#loading_proxy", "unload")
+			end)
+		end)
+
+		self.loading_game = false
+	end
+end
+
+local function start_game(self, level)
+	print("Starting game at level:", level)
+
+	-- Animate menu out of view
+	msg.post("menu:/gui", "animate_out")
+
+	-- Delay before transitioning to the game
+	timer.delay(0.9, false, function()
+		-- Unload the menu and enable the game
+		msg.post("#menu_proxy", "disable")
+		msg.post("#menu_proxy", "unload")
+		msg.post("#game_proxy", "enable")
+
+		-- load game over
+		msg.post("#game_over_proxy", "async_load")
+
+		-- Send a message to initialize the game at the selected level
+		msg.post("game:/game_controller", "initialize_level", { level = level })
+	end)
+end
+
+local function restart_game(self, level)
+	print("Restarting game at level:", level)
+
+	-- Unload the menu and enable the game
+	msg.post("#game_over_proxy", "disable")
+	msg.post("#menu_proxy", "unload")
+	msg.post("#game_proxy", "enable")
+
+	-- Send a message to initialize the game at the selected level
+	msg.post("game:/game_controller", "initialize_level", { level = level })
+end
+
+local function game_end(self, score)
+	-- unload game
+	msg.post("#game_proxy", "disable")
+	msg.post("#game_over_proxy", "enable")
+end
+
 function on_message(self, message_id, message, sender)
 	if message_id == hash("proxy_loaded") then
-		if sender == msg.url("main:/main#loading_proxy") then
-			msg.post("#game_proxy", "async_load")
-			self.loading_game = true
-		elseif sender == msg.url("main:/main#game_proxy") then
-			local current_time = socket.gettime()
-			local elapsed_time = current_time - self.starting_time
-			if elapsed_time >= 3 then
-				msg.post("loading:/gui", "animate_out")
-				timer.delay(0.5, false, function()
-					msg.post("#game_proxy", "enable")
-				end)
-			else
-				local remaining_time = 3 - elapsed_time
-				-- Set a timer to delay actions
-				timer.delay(remaining_time, false, function()
-					-- Trigger the loading screen animation out
-					msg.post("loading:/gui", "animate_out")
-
-					timer.delay(0.5, false, function()
-						msg.post("#game_proxy", "enable")
-					end)
-				end)
-			end
-
-			self.loading_game = false
-		end
+		handle_proxy_loaded(self, sender)
+	elseif message_id == hash("start_game") then
+		start_game(self, message.level)
+	elseif message_id == hash("end") then
+		game_end(self, message.score)
+	elseif message_id == hash("restart_game") then
+		restart_game(self, message.level)
 	end
 end

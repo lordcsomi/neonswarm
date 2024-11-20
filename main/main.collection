@@ -24,5 +24,11 @@ embedded_instances {
   "  data: \"collection: \\\"/loading/loading.collection\\\"\\n"
   "\"\n"
   "}\n"
+  "embedded_components {\n"
+  "  id: \"menu_proxy\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/menu/menu.collection\\\"\\n"
+  "\"\n"
+  "}\n"
   ""
 }

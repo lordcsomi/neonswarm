@@ -1,7 +1,7 @@
 function init(self)
 	self.health = 100  -- Set the enemy's initial health to 100
 	local tower_pos = go.get_position("/barrel")  -- Get the tower's position
-	local current_pos = go.get_position()         -- Get the enemy's current position
+	local current_pos = go.get_position()
 
 	-- Calculate the duration based on the distance to the target (for smoother movement)
 	local distance = vmath.length(tower_pos - current_pos)
@@ -30,9 +30,9 @@ function on_message(self, message_id, message, sender)
 			msg.post("/gui", "increment_score", { value = 1 })
 			particlefx.play("#explosion")
 			go.delete()
+		else
+			-- Update the visual representation of health
+			go.set_scale(vmath.vector3(health_percentage, health_percentage, 1), "infill")
 		end
-
-		-- Update the visual representation of health
-		go.set_scale(vmath.vector3(health_percentage, health_percentage, 1), "infill")
 	end
 end

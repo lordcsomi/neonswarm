@@ -18,7 +18,7 @@ nodes {
   }
   type: TYPE_BOX
   texture: "main/reload"
-  id: "reload"
+  id: "reload_button"
   inherit_alpha: true
   size_mode: SIZE_MODE_AUTO
 }
@@ -33,7 +33,7 @@ nodes {
   }
   type: TYPE_BOX
   texture: "main/home"
-  id: "home"
+  id: "home_button"
   inherit_alpha: true
   size_mode: SIZE_MODE_AUTO
 }

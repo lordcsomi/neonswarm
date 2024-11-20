@@ -1,35 +1,37 @@
-local bullet_speed = 700
+go.property("bullet_speed", 700)
+go.property("bullet_range", 1000)
+go.property("damage", 25)
 
 function init(self)
-	-- Get the direction of the bullet from its rotation
+	-- Get the direction of the bullet based on its rotation
 	local rotation = go.get_rotation()
-	local direction = vmath.rotate(rotation, vmath.vector3(1, 0, 0))  -- Moving in the x-direction based on rotation
+	local direction = vmath.rotate(rotation, vmath.vector3(1, 0, 0))  -- Moving in the x-direction
 
-	-- Calculate a far-away target position in the given direction
-	local target_position = go.get_position() + direction * 2000  -- Adjust the distance if needed
+	-- Calculate the target position
+	local target_position = go.get_position() + direction * self.bullet_range
 
-	-- Animate the bullet towards the target position
-	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, target_position, go.EASING_LINEAR, 2000 / bullet_speed, 0, function()
-		-- Delete the bullet once it reaches the target
-		go.delete()
+	-- Animate the bullet and delete it after reaching the target
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, target_position, go.EASING_LINEAR, self.bullet_range / self.bullet_speed, 0, function()
+		if go.exists(".") then
+			go.delete()
+		end
 	end)
-
-	-- Acquire input focus for collision detection
-	msg.post(".", "acquire_input_focus")
 end
 
 function on_message(self, message_id, message, sender)
-	-- Check for collision messages
+	-- Handle collision
 	if message_id == hash("trigger_response") and message.enter then
 		if message.other_group == hash("enemy") and not self.collided then
 			self.collided = true
-			msg.post("#collisionobject", "disable")
+			msg.post("#collisionobject", "disable")  -- Disable further collision checks
 
-			-- Send a message to deal damage to the enemy
-			msg.post(message.other_id, "deal_damage", { damage = 50 })  -- Bullet deals 25 damage
+			-- Notify the enemy to deal damage
+			msg.post(message.other_id, "deal_damage", { damage = self.damage })
 
 			-- Delete the bullet
-			go.delete()
+			if go.exists(".") then
+				go.delete()
+			end
 		end
 	end
 end

@@ -4,6 +4,11 @@ function init(self)
 	self.score_label = gui.get_node("score_label")
 	-- Keep track of whether the GUI is active or disabled
 	self.is_enabled = true
+	local screen_width = gui.get_width()
+	local screen_height = gui.get_height()
+	print("gui size",screen_width, screen_height)
+	-- Send the GUI size to the square_spawner.script
+	msg.post("game:/square_spawner", "update_size", { width = screen_width, height = screen_height })
 end
 
 function on_message(self, message_id, message, sender)

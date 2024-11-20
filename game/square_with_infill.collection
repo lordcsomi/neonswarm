@@ -5,7 +5,7 @@ embedded_instances {
   children: "infill"
   data: "components {\n"
   "  id: \"explosion\"\n"
-  "  component: \"/game/explosion.particlefx\"\n"
+  "  component: \"/game/square_explosion.particlefx\"\n"
   "}\n"
   "components {\n"
   "  id: \"square\"\n"
@@ -52,9 +52,6 @@ embedded_instances {
   "\"\n"
   "}\n"
   ""
-  position {
-    y: -100.0
-  }
 }
 embedded_instances {
   id: "infill"

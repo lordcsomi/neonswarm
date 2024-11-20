@@ -1,5 +1,5 @@
 local bullet_speed = 500
-local fire_rate = 0.5
+local fire_rate = 0.1
 
 -- Function to fire a bullet
 local function fire_bullet(self)
@@ -18,8 +18,8 @@ local function fire_bullet(self)
 end
 
 function init(self)
-	msg.post(".", "acquire_input_focus")
 	self.rotation_speed = 50
+	msg.post("#tower_collisionobject", "enable")
 	local barrel_id = "/barrel"
 	local barrel_rotation = go.get(barrel_id, "euler.z")
 	timer.delay(fire_rate, true, function()
@@ -31,13 +31,13 @@ function on_message(self, message_id, message, sender)
 	-- Check for collision messages
 	if message_id == hash("trigger_response") and message.enter then
 		if message.other_group == hash("enemy") and not self.collided then
-			self.collided = true
-			msg.post("#tower_collisionobject", "disable")
+			--self.collided = true
+			--msg.post("#tower_collisionobject", "disable")
 			msg.post("/container", "end")
 			print("tower hit")
 			msg.post("/gui#game", "end")
 			-- for now 
-			go.delete()
+			msg.post("main:/main", "end")
 		end
 	end
 end

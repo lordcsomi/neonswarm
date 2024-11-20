@@ -1,0 +1,51 @@
+local current_level = 1  -- Default starting level
+local max_level = 100    -- Maximum level
+local min_level = 1      -- Minimum level
+
+local function update_level_display(self)
+	-- Update the displayed level text
+	gui.set_text(self.level_text, tostring(current_level))
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	
+	-- Set up references to GUI nodes
+	self.root = gui.get_node("root")
+	self.level_text = gui.get_node("level_text")
+	self.increase_button = gui.get_node("increase_button")
+	self.decrease_button = gui.get_node("decrase_button")
+	self.start_button = gui.get_node("start_button")
+
+	-- Update the level display
+	update_level_display(self)
+end
+
+function on_input(self, action_id, action)
+	-- Handle input for increase button
+	if gui.pick_node(self.increase_button, action.x, action.y) and action.released then
+		if current_level < max_level then
+			current_level = current_level + 1
+			update_level_display(self)
+		end
+	end
+
+	-- Handle input for decrease button
+	if gui.pick_node(self.decrease_button, action.x, action.y) and action.released then
+		if current_level > min_level then
+			current_level = current_level - 1
+			update_level_display(self)
+		end
+	end
+
+	-- Handle input for start button
+	if gui.pick_node(self.start_button, action.x, action.y) and action.released then
+		msg.post("main:/main", "start_game", { level = current_level })
+		print("starting game with level", current_level)
+		local screen_height = gui.get_height()
+		gui.animate(self.root, "position.y", screen_height + 100, gui.EASING_OUTQUAD, 1.0, 0, function()
+			-- After the animation, disable the loading screen
+			msg.post("#", "disable")
+		end)
+	end
+end

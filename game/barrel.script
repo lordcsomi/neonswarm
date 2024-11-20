@@ -1,7 +1,10 @@
+go.property("auto_aim", true)
+
 function init(self)
 	msg.post(".", "acquire_input_focus") -- Acquire input focus
 	self.target_angle = 0  -- The target angle to rotate towards
 	self.is_rotating = false -- Flag to check if it's already animating
+	self.enemies = {}
 end
 
 function on_input(self, action_id, action)
@@ -44,4 +47,48 @@ function rotate_barrel(self, target_angle)
 	go.animate(".", "euler.z", go.PLAYBACK_ONCE_FORWARD, target_angle, go.EASING_INOUTSINE, 0.5, 0, function()
 		self.is_rotating = false -- Reset the flag when the animation is done
 	end)
+end
+
+
+function find_closest_enemy(self)
+	local barrel_pos = go.get_position()
+	local closest_enemy = nil
+	local closest_distance = math.huge
+	local angle_to_enemy = 0
+
+	for _, enemy_pos in ipairs(self.enemies) do
+		local dx = enemy_pos.x - barrel_pos.x
+		local dy = enemy_pos.y - barrel_pos.y
+		local distance = math.sqrt(dx * dx + dy * dy)
+
+		if distance < closest_distance then
+			closest_distance = distance
+			closest_enemy = enemy_pos
+			angle_to_enemy = math.atan2(dy, dx) * 180 / math.pi + 180
+
+			-- Normalize angle to range [0, 360)
+			if angle_to_enemy < 0 then
+				angle_to_enemy = angle_to_enemy + 360
+			elseif angle_to_enemy >= 360 then
+				angle_to_enemy = angle_to_enemy - 360
+			end
+		end
+	end
+
+	return closest_enemy, angle_to_enemy
+end
+
+function update(self, dt)
+	if self.auto_aim then
+		local closest_enemy, angle_to_enemy = find_closest_enemy(self)
+		if closest_enemy then
+			rotate_barrel(self, angle_to_enemy)
+		end
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("update_enemies") then
+		self.enemies = message.enemies
+	end
 end
